@@ -51,19 +51,32 @@ int main()
 
     do
     {
-        ask_reveal(board_option, visual_board, real_board);
+        printf("Do you want to place a flag(f) or reveal(r)?\n");
+        printf("input: ");
+        scanf("%s", answer);
 
+        if (strcmp(answer, "flag")==0 || strcmp(answer, "f")==0)
+            flag(board_option, visual_board);
+
+        else if(strcmp(answer, "reveal")==0 || strcmp(answer, "r")==0)
+            ask_reveal(board_option, visual_board, real_board);
+
+        else
+            printf("not a valid option try again\n");
+    
         print_board(board_option, visual_board);
 
     }while (win_check(board_option, visual_board, real_board) == 1);
 
-    printf("you win!");
+    printf("you win!\n");
+    printf("press enter to exit.\n");
+    getchar();
+    getchar();
 
     return 0;
 }
 
-
-int make_board(int board_option, int real_board[15][15])
+void make_board(int board_option, int real_board[15][15])
 {
     srand(time(NULL));
     
@@ -102,10 +115,11 @@ int make_board(int board_option, int real_board[15][15])
 printf("\n\n");
 }
 
-int print_board(int board_option, char visual_board[15][15])
+void print_board(int board_option, char visual_board[15][15])
 {
     int y = 1;
     int x = 1;
+    printf("\n");
     for (int i = 0; i < board_option; i++)
     {
         printf("/\\");
@@ -139,47 +153,72 @@ int print_board(int board_option, char visual_board[15][15])
     }
 }
 
-
-int ask_reveal(int board_option, char visual_board[15][15], int real_board[15][15])
+void flag(int board_option, char visual_board[15][15])
 {
-    int answer[2] = {0};
+    int x, y = 0;
     do{
-        printf("whate space do you want te reveal? x/y\n");
+        
+        printf("Where do you want a flag? x/y\n");
+        printf("choose the cordinates of a flag to remove it! x/y\n");
         printf("input: ");
-        scanf("%d %d", &answer[1], &answer[0]);
-        for (int i = 0; i < 2; i++)
-        {
-            if (answer[i] > board_option || answer[i] <= 0)
-            {
-                printf("invalid option try again.");
-            }
-        }
-    } while (answer[0] > board_option || answer[1] > board_option || answer[0] <= 0 || answer[1] <= 0);
+        scanf("%d %d", &x, &y);
 
-    for (int i = 0; i < 2; i++)
-        --answer[i];
+        if (x > board_option || x <= 0 || y > board_option || y <= 0)
+        {
+            printf("invalid option try again.\n");
+            x, y = 0;
+        }
+
+    } while (x > board_option || y > board_option || x <= 0 || y <= 0);
+
+    --x;
+    --y;
+
+    if (visual_board[y][x] == '?')
+        visual_board[y][x] = '!';
+    else if (visual_board[y][x] == '!')
+        visual_board[y][x] = '?';
+    else
+        printf("flag can't be placed\n");
+}
+
+void ask_reveal(int board_option, char visual_board[15][15], int real_board[15][15])
+{
+    int x, y = 0;
+    do{
+        
+        printf("What space do you want to reveal? x/y\n");
+        printf("input: ");
+        scanf("%d %d", &x, &y);
+
+        if (x > board_option || x <= 0 || y > board_option || y <= 0)
+        {
+            printf("invalid option try again.\n");
+            x, y = 0;
+        }
+
+    } while (x > board_option || y > board_option || x <= 0 || y <= 0);
+
+    --x;
+    --y;
     
-    
-    if (real_board[answer[0]][answer[1]] == -1)
+    if (real_board[y][x] == -1)
     {
         printf("You hit a bomb game over.\n");
-        printf("press any key to exit.\n");
+        printf("press enter to exit.\n");
         getchar();
         getchar();
         exit(1);
     }
     else
     {
-        reveal(visual_board, real_board, answer, board_option);
+        reveal(visual_board, real_board, x, y, board_option);
     }
 }
 
-
-int reveal(char visual_board[15][15], int real_board[15][15], int answer[2], int board_option)
+int reveal(char visual_board[15][15], int real_board[15][15], int x, int y, int board_option)
 {
     char number_char[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
-    int y = answer[0];
-    int x = answer[1];
 
 
     if (visual_board[y][x] != '?')
@@ -197,8 +236,9 @@ int reveal(char visual_board[15][15], int real_board[15][15], int answer[2], int
                 {
                     if (visual_board[i + y][j + x] == '?')
                     {
-                        int next[2] = {i+y, j+x};
-                        reveal(visual_board, real_board, next, board_option);
+                        int next1 = j+x;
+                        int next2 = i+y;
+                        reveal(visual_board, real_board, next1, next2, board_option);
                     }
                 }
             }
@@ -206,17 +246,16 @@ int reveal(char visual_board[15][15], int real_board[15][15], int answer[2], int
     }
 }
 
-
 int win_check(int board_option, char visual_board[15][15], int real_board[15][15])
 {
-    int safe_space = 0;
+    int undiscoverd_safe_space = 0;
 
     for (int i = 0; i < board_option; i++)
         for (int j = 0; j < board_option; j++)
-            if (visual_board[i][j] == '?' && real_board[i][j] != -1)
-                safe_space++;
+            if ((visual_board[i][j] == '?' || visual_board[i][j] == '!') && real_board[i][j] != -1)
+                undiscoverd_safe_space++;
 
-    if (safe_space == 0)
+    if (undiscoverd_safe_space == 0)
         return 0;
     else
         return 1;
