@@ -36,19 +36,31 @@ int main()
     }
 
     int real_board[15][15] = {0};
-    int visual_board[15][15] = {0};
+    char visual_board[15][15];
+
+    for (int i = 0; i < 15; i++)
+    {
+        for (int j = 0; j < 15; j++)
+        {
+            visual_board[i][j] = 'O';
+        }
+    }
+
     int bombs = 0;
 
     make_board(board_option, real_board, bombs);
 
     print_board(board_option, visual_board);
 
-    while (1)
+    do
     {
         ask_reveal(board_option, visual_board, real_board);
 
         print_board(board_option, visual_board);
-    }
+
+    }while (win_check(board_option, visual_board, real_board) == 1);
+
+    printf("you win!");
 
     return 0;
 }
@@ -94,24 +106,24 @@ int make_board(int board_option, int real_board[15][15], int bombs)
 printf("\n\n");
 }
 
-int print_board(int board_option, int visual_board[15][15])
+int print_board(int board_option, char visual_board[15][15])
 {
     for (int i = 0; i < board_option; i++)
     {
         for (int j = 0; j < board_option; j++)
         {
-            printf("%d ", visual_board[i][j]);
+            printf("%c ", visual_board[i][j]);
         }
     printf("\n");
     }
 }
 
 
-int ask_reveal(int board_option, int visual_board[15][15], int real_board[15][15])
+int ask_reveal(int board_option, char visual_board[15][15], int real_board[15][15])
 {
     int answer[2] = {0};
     do{
-        printf("whate space do you want te reveal? y x\n");
+        printf("whate space do you want te reveal? y/x\n");
         printf("input: ");
         scanf("%d %d", &answer[0], &answer[1]);
         for (int i = 0; i < 2; i++)
@@ -142,9 +154,11 @@ int ask_reveal(int board_option, int visual_board[15][15], int real_board[15][15
 }
 
 
-int reveal(int visual_board[15][15], int real_board[15][15], int answer[2], int board_option)
+int reveal(char visual_board[15][15], int real_board[15][15], int answer[2], int board_option)
 {
-    visual_board[answer[0]][answer[1]] = real_board[answer[0]][answer[1]];
+    char number_char[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+
+    visual_board[answer[0]][answer[1]] = number_char[real_board[answer[0]][answer[1]]];
 
     if (real_board[answer[0]][answer[1]] == 0)
     {
@@ -152,8 +166,27 @@ int reveal(int visual_board[15][15], int real_board[15][15], int answer[2], int 
         {
             for (int j = 0; j < 3; j++)
             {
-                visual_board[i + answer[0]-1][j + answer[1]-1] = real_board[i + answer[0]-1][j + answer[1]-1];
+                if (i + (answer[0]-1) >= 0 && j + (answer[1]-1) >= 0 && i + (answer[0]-1) < board_option && j + (answer[1]-1) < board_option)
+                    visual_board[i + answer[0]-1][j + answer[1]-1] = number_char[real_board[i + answer[0]-1][j + answer[1]-1]];
             }
         }
     }    
+}
+
+int win_check(int board_option, char visual_board[15][15], int real_board[15][15])
+{
+    int safe_space = 0;
+    for (int i = 0; i < board_option; i++)
+    {
+        for (int j = 0; j < board_option; j++)
+        {
+            if (visual_board[i][j] == 'O' && real_board[i][j] != -1)
+                safe_space++;
+        }
+    }
+
+    if (safe_space == 0)
+        return 0;
+    else
+        return 1;
 }
