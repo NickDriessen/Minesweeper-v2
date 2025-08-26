@@ -12,11 +12,11 @@ int main()
     
     printf("What size board do you want?\n");
     printf("Small\t(5X5)\n");
-    printf("Meduim\t(8X8)\n");
+    printf("Medium\t(8X8)\n");
     printf("Large\t(15X15)\n");
 
     while (board_option == 0){ //Scans for the answer and keeps looping untill its one of the options.
-        printf("input: ");
+        printf("Input: ");
         scanf("%s", &answer);
 
         for (int i = 0; i < strlen(answer); i++)
@@ -25,22 +25,22 @@ int main()
         if (stricmp(answer, "small")==0) //Makes a 5x5 board
             board_option = SMALL;
 
-        else if (stricmp(answer, "meduim")==0) //Makes a 8x8 board
+        else if (stricmp(answer, "medium")==0) //Makes a 8x8 board
             board_option = MEDIUM;
 
         else if (stricmp(answer, "large")==0) //Makes a 15x15 board
             board_option = LARGE;
 
         else
-            printf("\"%s\" is not a valid option try again.\n", answer);
+            printf("\"%s\" is not a valid option, try again.\n", answer);
     }
 
     int real_board[15][15] = {0}; //Makes a interger 2d array and sets them all to 0
-    char visual_board[15][15]; //Makes a charecter 2d array
+    char visual_board[15][15]; //Makes a character 2d array
 
     for (int i = 0; i < 15; i++)
         for (int j = 0; j < 15; j++)
-            visual_board[i][j] = '?'; //Makes it so all charecters in the 2d array are set to ?
+            visual_board[i][j] = '?'; //Makes it so all characters in the 2d array are set to ?
 
     int bombs = 0;
 
@@ -51,7 +51,7 @@ int main()
     do
     {
         printf("Do you want to place a flag(f) or reveal(r)?\n");
-        printf("input: ");
+        printf("Input: ");
         scanf("%s", answer);
 
         if (strcmp(answer, "flag")==0 || strcmp(answer, "f")==0) //Compares the answer to the word flag or just f
@@ -67,8 +67,8 @@ int main()
 
     }while (win_check(board_option, visual_board, real_board) == 1); //looks if there are no safe spaces te reveal.
 
-    printf("you win!\n"); //If all the safe spaces are reveald you will exit the loop and win the game.
-    printf("press enter to exit.\n");
+    printf("You win!\n"); //If all the safe spaces are revealed you will exit the loop and win the game.
+    printf("Press enter to exit.\n");
     getchar();
     getchar();
 
@@ -105,7 +105,7 @@ void make_board(int board_option, int real_board[15][15]) //Where the board with
                             numb++;
                     }
                 }
-            real_board[i][j] = numb; //Places the right number in the right possition
+            real_board[i][j] = numb; //Places the right number in the right position
             }
             //printf("%2d ", real_board[i][j]); //To print the board with the answers
         }
@@ -160,13 +160,13 @@ void flag(int board_option, char visual_board[15][15]) //For placing the flag
         
         printf("Where do you want a flag? x/y\n");
         printf("(choose the coordinates of a flag to remove it! x/y)\n");
-        printf("input: ");
+        printf("Input: ");
         scanf("%d %d", &x, &y); //Scans for the x and y coordinates
 
         if (x > board_option || x <= 0 || y > board_option || y <= 0) //Checks if the cordinates are possible
         {
             printf("invalid option try again.\n"); 
-            x, y = 0; //Sets the awnsers back to 0 to prevent infinate looping
+            x, y = 0; //Sets the answers back to 0 to prevent infinite looping
         }
 
     } while (x > board_option || y > board_option || x <= 0 || y <= 0); //Loops back to the question if not valid
@@ -174,12 +174,12 @@ void flag(int board_option, char visual_board[15][15]) //For placing the flag
     --x; //Sets the x and y 1 lower for the array
     --y;
 
-    if (visual_board[y][x] == '?') //If the space is not yet reveald you can place a flage(!)
+    if (visual_board[y][x] == '?') //If the space is not yet revealed you can place a flage(!)
         visual_board[y][x] = '!';
-    else if (visual_board[y][x] == '!') //If the space is already a flag(!) you can chainge it back to a ?
+    else if (visual_board[y][x] == '!') //If the space is already a flag(!) you can change it back to a ?
         visual_board[y][x] = '?';
     else
-        printf("flag can't be placed there\n"); //If the space is already reveald it want place a flag
+        printf("flag can't be placed there\n"); //If the space is already revealed it want place a flag
 }
 
 void ask_reveal(int board_option, char visual_board[15][15], int real_board[15][15]) //For revealing spaces
@@ -188,12 +188,12 @@ void ask_reveal(int board_option, char visual_board[15][15], int real_board[15][
     do{
         
         printf("What space do you want to reveal? x/y\n");
-        printf("input: ");
+        printf("Input: ");
         scanf("%d %d", &x, &y); //Also scans for the x and y coordinates
 
         if (x > board_option || x <= 0 || y > board_option || y <= 0) //Checks if the option is on the board
         {
-            printf("invalid option try again.\n");
+            printf("invalid option, try again.\n");
             x, y = 0;
         }
 
@@ -204,7 +204,7 @@ void ask_reveal(int board_option, char visual_board[15][15], int real_board[15][
     
     if (real_board[y][x] == BOMB) //If you ask to reveal a bomb you lose the game
     {
-        printf("You hit a bomb game over.\n");
+        printf("You hit a bomb. Game over.\n");
         printf("press enter to exit.\n");
         getchar();
         getchar();
@@ -216,7 +216,7 @@ void ask_reveal(int board_option, char visual_board[15][15], int real_board[15][
     }
 }
 
-int reveal(char visual_board[15][15], int real_board[15][15], int x, int y, int board_option) //Where the number get reveald to the player
+int reveal(char visual_board[15][15], int real_board[15][15], int x, int y, int board_option) //Where the number get revealed to the player
 {
     char number_char[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'}; //For making the int a char
 
@@ -237,7 +237,7 @@ int reveal(char visual_board[15][15], int real_board[15][15], int x, int y, int 
                     {
                         int next1 = j+x;
                         int next2 = i+y;
-                        reveal(visual_board, real_board, next1, next2, board_option); //Sends the new cordinates of the numbers that need to be reveald
+                        reveal(visual_board, real_board, next1, next2, board_option); //Sends the new cordinates of the numbers that need to be revealed
                     }
                 }
             }
@@ -247,14 +247,14 @@ int reveal(char visual_board[15][15], int real_board[15][15], int x, int y, int 
 
 int win_check(int board_option, char visual_board[15][15], int real_board[15][15]) //To check if you win or not
 {
-    int undiscoverd_safe_space = 0;
+    int undiscovered_safe_space = 0;
 
     for (int i = 0; i < board_option; i++)
         for (int j = 0; j < board_option; j++)
-            if ((visual_board[i][j] == '?' || visual_board[i][j] == '!') && real_board[i][j] != BOMB) //Checks if there are still some undiscoverd safe spaces
-                undiscoverd_safe_space++;
+            if ((visual_board[i][j] == '?' || visual_board[i][j] == '!') && real_board[i][j] != BOMB) //Checks if there are still some undiscovered safe spaces
+                undiscovered_safe_space++;
 
-    if (undiscoverd_safe_space == 0) //When you reveald all safe spaces it will send a 1 so the code knows you win
+    if (undiscovered_safe_space == 0) //When you revealed all safe spaces it will send a 1 so the code knows you win
         return 0;
     else
         return 1;
