@@ -25,30 +25,27 @@ int main()
         
         if (stricmp(answer, "small")==0)
             board_option = SMALL;
+
         else if (stricmp(answer, "meduim")==0)
             board_option = MEDIUM;
+
         else if (stricmp(answer, "large")==0)
             board_option = LARGE;
+
         else
-        {
             printf("\"%s\" is not a valid option try again.\n", answer);
-        }
     }
 
     int real_board[15][15] = {0};
     char visual_board[15][15];
 
     for (int i = 0; i < 15; i++)
-    {
         for (int j = 0; j < 15; j++)
-        {
-            visual_board[i][j] = 'O';
-        }
-    }
+            visual_board[i][j] = '?';
 
     int bombs = 0;
 
-    make_board(board_option, real_board, bombs);
+    make_board(board_option, real_board);
 
     print_board(board_option, visual_board);
 
@@ -66,7 +63,7 @@ int main()
 }
 
 
-int make_board(int board_option, int real_board[15][15], int bombs)
+int make_board(int board_option, int real_board[15][15])
 {
     srand(time(NULL));
     
@@ -78,7 +75,6 @@ int make_board(int board_option, int real_board[15][15], int bombs)
             if (bomb == 1)
             {
                 real_board[i][j] = BOMB;
-                ++bombs;
             }
         }
     }
@@ -108,12 +104,37 @@ printf("\n\n");
 
 int print_board(int board_option, char visual_board[15][15])
 {
+    int y = 1;
+    int x = 1;
     for (int i = 0; i < board_option; i++)
     {
+        printf("/\\");
+    }
+
+    printf("Minesweeper");
+
+    for (int i = 0; i < board_option; i++)
+    {
+        printf("/\\");
+    }
+    
+    printf("\n\n\t");
+    for (int i = 0; i < board_option; i++)
+    {
+        printf("%3d ", x);
+        x++;
+    }
+    printf("\n\n");
+    
+    for (int i = 0; i < board_option; i++)
+    {
+        printf("%d \t|", y);
+        y++;
         for (int j = 0; j < board_option; j++)
         {
-            printf("%c ", visual_board[i][j]);
+            printf(" %c |", visual_board[i][j]);
         }
+
     printf("\n");
     }
 }
@@ -123,9 +144,9 @@ int ask_reveal(int board_option, char visual_board[15][15], int real_board[15][1
 {
     int answer[2] = {0};
     do{
-        printf("whate space do you want te reveal? y/x\n");
+        printf("whate space do you want te reveal? x/y\n");
         printf("input: ");
-        scanf("%d %d", &answer[0], &answer[1]);
+        scanf("%d %d", &answer[1], &answer[0]);
         for (int i = 0; i < 2; i++)
         {
             if (answer[i] > board_option || answer[i] <= 0)
@@ -157,33 +178,43 @@ int ask_reveal(int board_option, char visual_board[15][15], int real_board[15][1
 int reveal(char visual_board[15][15], int real_board[15][15], int answer[2], int board_option)
 {
     char number_char[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+    int y = answer[0];
+    int x = answer[1];
 
-    visual_board[answer[0]][answer[1]] = number_char[real_board[answer[0]][answer[1]]];
 
-    if (real_board[answer[0]][answer[1]] == 0)
-    {
-        for (int i = 0; i < 3; i++)
+    if (visual_board[y][x] != '?')
+        return 0;
+
+    visual_board[y][x] = number_char[real_board[y][x]];
+
+    if (real_board[y][x] == 0)
+    {    
+        for (int i = -1; i < 2; i++)
         {
-            for (int j = 0; j < 3; j++)
+            for (int j = -1; j < 2; j++)
             {
-                if (i + (answer[0]-1) >= 0 && j + (answer[1]-1) >= 0 && i + (answer[0]-1) < board_option && j + (answer[1]-1) < board_option)
-                    visual_board[i + answer[0]-1][j + answer[1]-1] = number_char[real_board[i + answer[0]-1][j + answer[1]-1]];
+                if (i + y >= 0 && j + x >= 0 && i + y < board_option && j + x < board_option)
+                {
+                    if (visual_board[i + y][j + x] == '?')
+                    {
+                        int next[2] = {i+y, j+x};
+                        reveal(visual_board, real_board, next, board_option);
+                    }
+                }
             }
         }
-    }    
+    }
 }
+
 
 int win_check(int board_option, char visual_board[15][15], int real_board[15][15])
 {
     int safe_space = 0;
+
     for (int i = 0; i < board_option; i++)
-    {
         for (int j = 0; j < board_option; j++)
-        {
-            if (visual_board[i][j] == 'O' && real_board[i][j] != -1)
+            if (visual_board[i][j] == '?' && real_board[i][j] != -1)
                 safe_space++;
-        }
-    }
 
     if (safe_space == 0)
         return 0;
