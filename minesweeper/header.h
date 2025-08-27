@@ -1,7 +1,7 @@
 #ifndef HEADER_H
 #define HEADER_H
 
-void make_board(int board_option, int real_board[15][15]);
+void make_board(int board_option, int real_board[15][15], char visual_board[15][15]);
 void print_board(int board_option, char visual_board[15][15]);
 void flag(int board_option, char visual_board[15][15]);
 void ask_reveal(int board_option, char visual_board[15][15], int real_board[15][15]);

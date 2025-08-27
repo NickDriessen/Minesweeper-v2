@@ -44,7 +44,10 @@ int main()
 
     int bombs = 0;
 
-    make_board(board_option, real_board); //Makes the board with all the bomb locations and all the numbers
+
+    print_board(board_option, visual_board); //Prints the board with all the ?
+
+    make_board(board_option, real_board, visual_board); //Makes the board with all the bomb locations and all the numbers
 
     print_board(board_option, visual_board); //Prints the board with all the ?
 
@@ -75,8 +78,26 @@ int main()
     return 0;
 }
 
-void make_board(int board_option, int real_board[15][15]) //Where the board with the bombs gets made
+void make_board(int board_option, int real_board[15][15], char visual_board[15][15]) //Where the board with the bombs gets made
 {
+    int x, y = 0;
+    do{
+        
+        printf("Where do you want to start? x/y\n");
+        printf("Input: ");
+        scanf("%d %d", &x, &y); //Scans for the x and y coordinates
+
+        if (x > board_option || x <= 0 || y > board_option || y <= 0) //Checks if the option is on the board
+        {
+            printf("invalid option, try again.\n");
+            x, y = 0;
+        }
+
+    } while (x > board_option || y > board_option || x <= 0 || y <= 0); //If the option is not on the board it wil ask again
+
+    --x; //Sets the x and y 1 lower for the array
+    --y;
+
     srand(time(NULL));//Makes it posible te create "random" numbers
     
     for (int i = 0; i < board_option; i++)
@@ -90,6 +111,7 @@ void make_board(int board_option, int real_board[15][15]) //Where the board with
             }
         }
     }
+    real_board[y][x] = 0; //Makes the fist possition you start safe
     for (int i = 0; i < board_option; i++)
     {
         for (int j = 0; j < board_option; j++)
@@ -112,6 +134,9 @@ void make_board(int board_option, int real_board[15][15]) //Where the board with
     //printf("\n");
     }
 //printf("\n\n");
+
+reveal(visual_board, real_board, x, y, board_option); //reveals the fist safe possition
+
 }
 
 void print_board(int board_option, char visual_board[15][15]) //Where the board for the player gets made
@@ -201,7 +226,7 @@ void ask_reveal(int board_option, char visual_board[15][15], int real_board[15][
 
     --x; //Sets the x and y 1 lower for the array
     --y;
-    
+
     if (real_board[y][x] == BOMB) //If you ask to reveal a bomb you lose the game
     {
         printf("You hit a bomb. Game over.\n");
